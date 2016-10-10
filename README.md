@@ -36,7 +36,7 @@ Currently it produces only the "station name - short format" message which conta
 psd_gen.py
 ----------
 
-This script generates PSD (Program Services Data) transport PDUs (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1028sD.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1085sC.pdf) for use in the audio transport. The PDUs contain metadata such as the song & artist name.
+This script generates PSD (Program Services Data) transport PDUs (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1028sD.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1085sC.pdf) for use in the audio transport. The PDUs contain metadata such as the song & artist name. Output is written to psd.raw.
 
 hd_tx.grc, hd_tx.py
 -------------------
