@@ -33,6 +33,11 @@ This script produces SIS (Station Information Service) PDUs (as defined in http:
 
 Currently it produces only the "station name - short format" message which contains the station's four-letter callsign followed by an optional "-FM" suffix.
 
+psd_gen.py
+----------
+
+This script generates PSD (Program Services Data) transport PDUs (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1028sD.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1085sC.pdf) for use in the audio transport. The PDUs contain metadata such as the song & artist name.
+
 hd_tx.grc, hd_tx.py
 -------------------
 
