@@ -32,3 +32,16 @@ pids_gen.py
 This script produces SIS (Station Information Service) PDUs (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1020sI.pdf) and assembles them into the PIDS logical channel. Each byte of the output file (pids.raw) contains one bit of the PIDS channel.
 
 Currently it produces only the "station name - short format" message which contains the station's four-letter callsign followed by an optional "-FM" suffix.
+
+hd_tx.grc, hd_tx.py
+-------------------
+
+This GNU Radio flowgraph transmits a hybrid (analog & digital) FM signal. The analog portion is simply a 1 kHz tone. The OFDM symbols for the digital portion are read from symbols.raw. The FFT size is 2048, and each byte of the symbol file contains one channel's OFDM symbol, which can be one of the following values:
+
+| byte | constellation value |
+|:----:|---------------------|
+| 0    | -1-j                |
+| 1    | -1+j                |
+| 2    | 1-j                 |
+| 3    | 1+j                 |
+| 4    | 0 (unused channel)  |
