@@ -38,6 +38,11 @@ psd_gen.py
 
 This script generates PSD (Program Services Data) transport PDUs (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1028sD.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1085sC.pdf) for use in the audio transport. The PDUs contain metadata such as the song & artist name. Output is written to psd.raw.
 
+l1_gen.py
+---------
+
+This script implements Layer 1 FM (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1011sG.pdf). It reads in PIDS and P1 PDUs from pids.raw and p1.raw respectively, and writes OFDM symbols to symbols.raw. So far only Primary Service Mode MP1 is implemented.
+
 hd_tx.grc, hd_tx.py
 -------------------
 
