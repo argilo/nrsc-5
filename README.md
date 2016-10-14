@@ -28,7 +28,7 @@ The goal of this project is to implement an HD Radio receiver and transmitter in
 
 To transmit and HD Radio signal on 95.7 FM:
 
-1. Download https://drive.google.com/file/d/0BwvnypgBYJseSWREQ0kwd29QakE/view?usp=sharing, rename it to audio.txt and place it alongside the other files in this repo.
+1. Download sample audio packets from https://drive.google.com/file/d/0BwvnypgBYJseSWREQ0kwd29QakE/view?usp=sharing. Rename the file to audio.txt and place it alongside the other files in this repo.
 1. Run `python pids_gen.py && python psd_gen.py && python p1_gen.py && python l1_gen.py` to generate OFDM symbols.
 1. Plug in a USRP B200 and run `./hd_tx.py`.
 
