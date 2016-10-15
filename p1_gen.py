@@ -85,8 +85,8 @@ def crc8(bytes):
     return reg
 
 # 1017sG.pdf figure 5-2
-def pdu_control_word(pdu_seq_no, stream_id, codec_mode, per_stream_delay, blend_control,
-        latency, common_delay, start_seq_no, p_last, p_first, hef, nop, la_loc):
+def pdu_control_word(codec_mode, stream_id, pdu_seq_no, blend_control, per_stream_delay,
+        common_delay, latency, p_first, p_last, start_seq_no, nop, hef, la_loc):
     out = bytearray([0] * 6)
     out[0] = ((pdu_seq_no & 0b11) << 6) | (stream_id << 4) | codec_mode
     out[1] = (per_stream_delay << 3) | (blend_control << 1) | (pdu_seq_no >> 2)
@@ -142,9 +142,9 @@ with open('p1.raw', 'wb') as fout:
                 ends.append(end)
 
             pdu_seq_no = frame % 2
-            pdu = pdu_control_word(pdu_seq_no = pdu_seq_no, stream_id = 0, codec_mode = 0, per_stream_delay = 0,
-                blend_control = 2, latency = 4, common_delay = 0, start_seq_no = start_seq_no,
-                p_last = 0, p_first = 0, hef = 1, nop = nop, la_loc = la_loc)
+            pdu = pdu_control_word(codec_mode = 0, stream_id = 0, pdu_seq_no = pdu_seq_no, blend_control = 2,
+                per_stream_delay = 0, common_delay = 0, latency = 4, p_first = 0, p_last = 0,
+                start_seq_no = start_seq_no, nop = nop, hef = 1, la_loc = la_loc)
             start_seq_no = (start_seq_no + nop) % 64
 
             pdu += struct.pack("<"+"H"*nop, *ends)
