@@ -28,7 +28,6 @@ The goal of this project is to implement an HD Radio receiver and transmitter in
 
 To transmit an HD Radio signal on 95.7 FM:
 
-1. Download sample audio packets from https://drive.google.com/file/d/0BwvnypgBYJseSWREQ0kwd29QakE/view?usp=sharing. Rename the file to audio.txt and place it alongside the other files in this repo.
 1. Run `python pids_gen.py && python psd_gen.py && python p1_gen.py && python l1_gen.py` to generate OFDM symbols.
 1. Plug in a USRP B200 and run `./hd_tx.py`.
 
@@ -48,12 +47,7 @@ This script generates PSD (Program Services Data) transport PDUs (as defined in 
 
 ### p1_gen.py
 
-This script assembles audio packets and PSD PDUs into the audio transport, producing the P1 logical channel (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1014sI.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1017sG.pdf). It reads PSD PDUs from psd.raw and audio packets from audio.txt. It writes the P1 logical channel bytes to p1.raw.
-
-The format for the audio.txt file containing audio packets is as follows: The first line consists of a single integer (n) indicating the number of audio packets to be packed into the first audio transport PDU. It is followed by n lines, each containing one audio packet whose bytes are written in hexadecimal format with no spaces. Each subsequent audio transport PDU then appears in the same format (number of audio packets, following by audio packets in hexadecimal). Two sample files containing 32 audio transport PDUs each are available here:
-
-* https://drive.google.com/file/d/0BwvnypgBYJseSWREQ0kwd29QakE/view?usp=sharing
-* https://drive.google.com/file/d/0BwvnypgBYJseMS0xaEZKUW1IUGM/view?usp=sharing
+This script assembles audio packets and PSD PDUs into the audio transport, producing the P1 logical channel (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1014sI.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1017sG.pdf). It reads PSD PDUs from psd.raw and writes the P1 logical channel bytes to p1.raw.
 
 For Reed Solomon encoding, p1_gen.py uses [reedsolo 0.3](https://pypi.python.org/pypi/reedsolo), written by Tomer Filiba, which can be found in reedsolo.py. The generator polynomial (defined in the `rs_generator_poly` function) was changed to match the one defined in http://www.nrscstandards.org/SG/NRSC-5-C/1019sG.pdf section 6.3.
 
