@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Hd Tx
-# Generated: Sun Oct 16 13:17:33 2016
+# Generated: Sun Oct 16 13:18:56 2016
 ##################################################
 
 from gnuradio import analog
@@ -29,7 +29,7 @@ class hd_tx(gr.top_block):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 4000000
+        self.samp_rate = samp_rate = 2000000
         self.freq = freq = 95.7e6
 
         ##################################################
@@ -46,7 +46,7 @@ class hd_tx(gr.top_block):
         self.uhd_usrp_sink_0.set_center_freq(freq, 0)
         self.uhd_usrp_sink_0.set_gain(70, 0)
         self.rational_resampler_xxx_2 = filter.rational_resampler_ccc(
-                interpolation=512,
+                interpolation=256,
                 decimation=243,
                 taps=None,
                 fractional_bw=None,

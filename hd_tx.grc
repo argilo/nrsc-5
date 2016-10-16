@@ -132,7 +132,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>4000000</value>
+      <value>2000000</value>
     </param>
   </block>
   <block>
@@ -965,7 +965,7 @@
     </param>
     <param>
       <key>interp</key>
-      <value>512</value>
+      <value>256</value>
     </param>
     <param>
       <key>maxoutbuf</key>
