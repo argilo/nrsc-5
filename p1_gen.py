@@ -22,7 +22,7 @@ import reedsolo
 import struct
 
 silence_packet = bytearray([0x41, 0x2c, 0x41, 0xb0, 0x43, 0xe5, 0x7b, 0x46, 0x80, 0x3e,
-    0x6d, 0x21, 0x70, 0x00, 0x00, 0x00, 0x00, 0x02, 0x16, 0x52, 0x00, 0x6f, 0x8d] + [0]*155)
+    0x6d, 0x21, 0x70, 0x00, 0x00, 0x00, 0x00, 0x02, 0x16, 0x52, 0x00, 0x6f, 0x8d])
 
 # 1014sI.pdf table 5-3
 CW0 = [0,0,1,1,1,0,0,0,1,1,0,1,1,0,0,0,1,1,0,1,0,0,1,1] # MPS/SPS
@@ -125,46 +125,53 @@ rs = reedsolo.RSCodec(8)
 
 NUM_FRAMES = 32
 
+fpsd = [open('psd{0}.raw'.format(channel+1), 'rb') for channel in range(8)]
+
 with open('p1.raw', 'wb') as fout:
-    with open('psd.raw', 'rb') as fpsd:
-        start_seq_no = 0
-        for frame in range(NUM_FRAMES):
-            audio_packets = [silence_packet] * 32
+    start_seq_no = 0
+    for frame in range(NUM_FRAMES):
+        audio_packets = [silence_packet] * 32
 
-            # 1017sG.pdf figure 5-1
-            nop = len(audio_packets)
-            la_loc = 8 + 6 + nop*2 + 128 - 1
+        # 1017sG.pdf figure 5-1
+        nop = len(audio_packets)
+        la_loc = 8 + 6 + nop*2 + 128 - 1
 
-            end = la_loc
-            ends = []
-            for packet in audio_packets:
-                end += len(packet) + 1
-                ends.append(end)
+        end = la_loc
+        ends = []
+        for packet in audio_packets:
+            end += len(packet) + 1
+            ends.append(end)
 
-            pdu_seq_no = frame % 2
+        pdu_seq_no = frame % 2
+        p1_bytes = bytearray()
+        for channel in range(8):
             pdu = pdu_control_word(codec_mode = 0, stream_id = 0, pdu_seq_no = pdu_seq_no, blend_control = 2,
                 per_stream_delay = 0, common_delay = 0, latency = 4, p_first = 0, p_last = 0,
                 start_seq_no = start_seq_no, nop = nop, hef = 1, la_loc = la_loc)
-            start_seq_no = (start_seq_no + nop) % 64
 
             pdu += struct.pack("<"+"H"*nop, *ends)
 
-            hef = header_expansion_fields(class_ind = None, program_number = 0, access = 0, program_type = 14)
+            hef = header_expansion_fields(class_ind = None, program_number = channel, access = 0, program_type = 14)
             pdu += hef
-            pdu += bytearray(fpsd.read(128 - len(hef)))
+            pdu += bytearray(fpsd[channel].read(128 - len(hef)))
 
             for packet in audio_packets:
                 pdu += packet
                 pdu.append(crc8(packet))
 
             pdu = rs.encode(pdu[87::-1])[::-1] + pdu[88:]
+            p1_bytes += pdu
 
-            p1_bytes = pdu + bytearray([0] * ((146176-24) // 8 - len(pdu)))
+        start_seq_no = (start_seq_no + nop) % 64
+        p1_bytes += bytearray([0] * ((146176-24) // 8 - len(p1_bytes)))
 
-            p1_bits = []
-            for byte in p1_bytes:
-                p1_bits += [int(b) for b in "{0:08b}".format(byte)]
+        p1_bits = []
+        for byte in p1_bytes:
+            p1_bits += [int(b) for b in "{0:08b}".format(byte)]
 
-            p1_bits = header_spread(p1_bits, CW0)
-            p1_bytes = bytearray([int("".join([str(b) for b in p1_bits[i:i+8]]), 2) for i in range(0, len(p1_bits), 8)])
-            fout.write(p1_bytes)
+        p1_bits = header_spread(p1_bits, CW0)
+        p1_bytes = bytearray([int("".join([str(b) for b in p1_bits[i:i+8]]), 2) for i in range(0, len(p1_bits), 8)])
+        fout.write(p1_bytes)
+
+for channel in range(8):
+    fpsd[channel].close()

@@ -66,15 +66,16 @@ def encode_ppp(bytes):
             out.append(byte)
     return out
 
-tags = [
-    ["TIT2", "Software Defined Radio"],
-    ["TPE1", "GNU Radio FTW!"]
-]
+port = [0x5100, 0x5201, 0x5202, 0x5203, 0x5204, 0x5205, 0x5206, 0x5207]
 
-initial_seq_num = 0
-
-with open('psd.raw', 'wb') as f:
-    for seq_num in range(initial_seq_num, initial_seq_num + 100):
-        pdu = encode_ppp(encode_psd_packet(0x21, 0x5100, seq_num, encode_id3(tags)))
-        f.write(pdu)
-    f.write(b"\x7E")
+for channel in range(8):
+    initial_seq_num = 0
+    tags = [
+        ["TIT2", "Title for HD{0}".format(channel+1)],
+        ["TPE1", "Artist for HD{0}".format(channel+1)]
+    ]
+    with open('psd{0}.raw'.format(channel+1), 'wb') as f:
+        for seq_num in range(initial_seq_num, initial_seq_num + 100):
+            pdu = encode_ppp(encode_psd_packet(0x21, port[channel], seq_num, encode_id3(tags)))
+            f.write(pdu)
+        f.write(b"\x7E")

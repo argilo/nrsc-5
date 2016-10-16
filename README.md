@@ -43,11 +43,11 @@ Currently it produces only the "station name - short format" message which conta
 
 ### psd_gen.py
 
-This script generates PSD (Program Services Data) transport PDUs (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1028sD.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1085sC.pdf) for use in the audio transport. The PDUs contain metadata such as the song & artist name. Output is written to psd.raw.
+This script generates PSD (Program Services Data) transport PDUs (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1028sD.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1085sC.pdf) for use in the audio transport. The PDUs contain metadata such as the song & artist name. Output is written to psd1.raw through psd8.raw for channels HD1 through HD8 respectively.
 
 ### p1_gen.py
 
-This script assembles audio packets and PSD PDUs into the audio transport, producing the P1 logical channel (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1014sI.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1017sG.pdf). It reads PSD PDUs from psd.raw and writes the P1 logical channel bytes to p1.raw.
+This script assembles audio packets and PSD PDUs into the audio transport, producing the P1 logical channel (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1014sI.pdf and http://www.nrscstandards.org/SG/NRSC-5-C/1017sG.pdf). It reads PSD PDUs from psd*.raw and writes the P1 logical channel bytes to p1.raw.
 
 For Reed Solomon encoding, p1_gen.py uses [reedsolo 0.3](https://pypi.python.org/pypi/reedsolo), written by Tomer Filiba, which can be found in reedsolo.py. The generator polynomial (defined in the `rs_generator_poly` function) was changed to match the one defined in http://www.nrscstandards.org/SG/NRSC-5-C/1019sG.pdf section 6.3.
 
