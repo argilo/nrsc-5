@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Hd Tx
-# Generated: Mon Oct 10 12:05:30 2016
+# Generated: Sun Oct 16 13:17:33 2016
 ##################################################
 
 from gnuradio import analog
@@ -30,6 +30,7 @@ class hd_tx(gr.top_block):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 4000000
+        self.freq = freq = 95.7e6
 
         ##################################################
         # Blocks
@@ -42,7 +43,7 @@ class hd_tx(gr.top_block):
         	),
         )
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_sink_0.set_center_freq(95.7e6, 0)
+        self.uhd_usrp_sink_0.set_center_freq(freq, 0)
         self.uhd_usrp_sink_0.set_gain(70, 0)
         self.rational_resampler_xxx_2 = filter.rational_resampler_ccc(
                 interpolation=512,
@@ -108,6 +109,13 @@ class hd_tx(gr.top_block):
         self.samp_rate = samp_rate
         self.uhd_usrp_sink_0.set_samp_rate(self.samp_rate)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 80000, 20000, firdes.WIN_HAMMING, 6.76))
+
+    def get_freq(self):
+        return self.freq
+
+    def set_freq(self, freq):
+        self.freq = freq
+        self.uhd_usrp_sink_0.set_center_freq(self.freq, 0)
 
 
 def main(top_block_cls=hd_tx, options=None):
