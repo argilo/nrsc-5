@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Hd Tx
-# Generated: Sun Oct 16 13:18:56 2016
+# Title: Hd Tx Usrp
+# Generated: Sun Oct 16 13:25:27 2016
 ##################################################
 
 from gnuradio import analog
@@ -21,10 +21,10 @@ from optparse import OptionParser
 import time
 
 
-class hd_tx(gr.top_block):
+class hd_tx_usrp(gr.top_block):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Hd Tx")
+        gr.top_block.__init__(self, "Hd Tx Usrp")
 
         ##################################################
         # Variables
@@ -118,7 +118,7 @@ class hd_tx(gr.top_block):
         self.uhd_usrp_sink_0.set_center_freq(self.freq, 0)
 
 
-def main(top_block_cls=hd_tx, options=None):
+def main(top_block_cls=hd_tx_usrp, options=None):
 
     tb = top_block_cls()
     tb.start()

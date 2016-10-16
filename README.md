@@ -29,7 +29,7 @@ The goal of this project is to implement an HD Radio receiver and transmitter in
 To transmit an HD Radio signal on 95.7 FM:
 
 1. Run `python pids_gen.py && python psd_gen.py && python p1_gen.py && python l1_gen.py` to generate OFDM symbols.
-1. Plug in a USRP B200 and run `./hd_tx.py`.
+1. Plug in a USRP B200/B210 and run `./hd_tx_usrp.py`. Or plug in a HackRF and run `./hd_tx_hackrf.py`.
 
 ## Components
 
@@ -55,9 +55,9 @@ For Reed Solomon encoding, p1_gen.py uses [reedsolo 0.3](https://pypi.python.org
 
 This script implements Layer 1 FM (as defined in http://www.nrscstandards.org/SG/NRSC-5-C/1011sG.pdf). It reads in PIDS and P1 PDUs from pids.raw and p1.raw respectively, and writes OFDM symbols to symbols.raw. So far only Primary Service Mode MP1 is implemented.
 
-### hd_tx.grc, hd_tx.py
+### hd\_tx\_\*.grc, hd\_tx\_\*.py
 
-This GNU Radio flowgraph transmits a hybrid (analog & digital) FM signal. The analog portion is simply a 1 kHz tone. The OFDM symbols for the digital portion are read from symbols.raw. The FFT size is 2048, and each byte of the symbol file contains one channel's OFDM symbol, which can be one of the following values:
+These GNU Radio flowgraphs transmit a hybrid (analog & digital) FM signal. The analog portion is simply a 1 kHz tone. The OFDM symbols for the digital portion are read from symbols.raw. The FFT size is 2048, and each byte of the symbol file contains one channel's OFDM symbol, which can be one of the following values:
 
 | byte | constellation value |
 |:----:|---------------------|
