@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Hd Tx Usrp
-# Generated: Sun Oct 16 13:25:27 2016
+# Generated: Wed Aug  9 22:00:28 2017
 ##################################################
 
 from gnuradio import analog
@@ -18,6 +18,7 @@ from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
 from gnuradio.filter import firdes
 from optparse import OptionParser
+import math
 import time
 
 
@@ -65,12 +66,16 @@ class hd_tx_usrp(gr.top_block):
         )
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	1, samp_rate, 80000, 20000, firdes.WIN_HAMMING, 6.76))
-        self.fft_vxx_0 = fft.fft_vcc(2048, False, (), True, 1)
-        self.digital_ofdm_cyclic_prefixer_0 = digital.ofdm_cyclic_prefixer(2048, 2048+112, 0, '')
+        self.fft_vxx_0 = fft.fft_vcc(2048, False, (window.rectangular(2048)), True, 1)
         self.digital_chunks_to_symbols_xx_0 = digital.chunks_to_symbols_bc((-1-1j, -1+1j, 1-1j, 1+1j, 0), 1)
+        self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, 2048)
+        self.blocks_vector_source_x_0 = blocks.vector_source_c([math.sin(math.pi / 2 * i / 112) for i in range(112)] + [1] * (2048-112) + [math.cos(math.pi / 2 * i / 112) for i in range(112)], True, 1, [])
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, 2048)
+        self.blocks_repeat_0 = blocks.repeat(gr.sizeof_gr_complex*2048, 2)
+        self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((0.1, ))
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc((0.001, ))
+        self.blocks_keep_m_in_n_0 = blocks.keep_m_in_n(gr.sizeof_gr_complex, 2160, 4096, 0)
         self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, 'symbols.raw', False)
         self.blocks_conjugate_cc_0 = blocks.conjugate_cc()
         self.blocks_add_xx_0 = blocks.add_vcc(1)
@@ -86,21 +91,25 @@ class hd_tx_usrp(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0, 0), (self.analog_wfm_tx_0, 0))    
-        self.connect((self.analog_wfm_tx_0, 0), (self.rational_resampler_xxx_0, 0))    
-        self.connect((self.blocks_add_xx_0, 0), (self.uhd_usrp_sink_0, 0))    
-        self.connect((self.blocks_conjugate_cc_0, 0), (self.rational_resampler_xxx_1, 0))    
-        self.connect((self.blocks_file_source_0, 0), (self.digital_chunks_to_symbols_xx_0, 0))    
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_add_xx_0, 0))    
-        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blocks_add_xx_0, 1))    
-        self.connect((self.blocks_stream_to_vector_0, 0), (self.fft_vxx_0, 0))    
-        self.connect((self.digital_chunks_to_symbols_xx_0, 0), (self.blocks_stream_to_vector_0, 0))    
-        self.connect((self.digital_ofdm_cyclic_prefixer_0, 0), (self.blocks_conjugate_cc_0, 0))    
-        self.connect((self.fft_vxx_0, 0), (self.digital_ofdm_cyclic_prefixer_0, 0))    
-        self.connect((self.low_pass_filter_0, 0), (self.blocks_multiply_const_vxx_1, 0))    
-        self.connect((self.rational_resampler_xxx_0, 0), (self.low_pass_filter_0, 0))    
-        self.connect((self.rational_resampler_xxx_1, 0), (self.rational_resampler_xxx_2, 0))    
-        self.connect((self.rational_resampler_xxx_2, 0), (self.blocks_multiply_const_vxx_0, 0))    
+        self.connect((self.analog_sig_source_x_0, 0), (self.analog_wfm_tx_0, 0))
+        self.connect((self.analog_wfm_tx_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.blocks_add_xx_0, 0), (self.uhd_usrp_sink_0, 0))
+        self.connect((self.blocks_conjugate_cc_0, 0), (self.rational_resampler_xxx_1, 0))
+        self.connect((self.blocks_file_source_0, 0), (self.digital_chunks_to_symbols_xx_0, 0))
+        self.connect((self.blocks_keep_m_in_n_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_add_xx_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blocks_add_xx_0, 1))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_conjugate_cc_0, 0))
+        self.connect((self.blocks_repeat_0, 0), (self.blocks_vector_to_stream_0, 0))
+        self.connect((self.blocks_stream_to_vector_0, 0), (self.fft_vxx_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.blocks_vector_to_stream_0, 0), (self.blocks_keep_m_in_n_0, 0))
+        self.connect((self.digital_chunks_to_symbols_xx_0, 0), (self.blocks_stream_to_vector_0, 0))
+        self.connect((self.fft_vxx_0, 0), (self.blocks_repeat_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.blocks_multiply_const_vxx_1, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.low_pass_filter_0, 0))
+        self.connect((self.rational_resampler_xxx_1, 0), (self.rational_resampler_xxx_2, 0))
+        self.connect((self.rational_resampler_xxx_2, 0), (self.blocks_multiply_const_vxx_0, 0))
 
     def get_samp_rate(self):
         return self.samp_rate
