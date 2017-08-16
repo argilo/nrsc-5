@@ -110,13 +110,14 @@ def header_expansion_fields(class_ind, program_number, access, program_type):
     return out
 
 def read_audio_packets(f):
-    nop = int(f.readline())
+    nop = 32
     audio_packets = []
     for i in range(nop):
-        packet = bytearray()
-        line = f.readline().rstrip()
-        for j in range(0, len(line), 2):
-            packet.append(int(line[j:j+2], 16))
+        header = bytearray(f.read(7))
+        if len(header) < 7 or header[0] != 0xff or header[1] & 0xf0 != 0xf0:
+            return audio_packets
+        length = (header[3] & 0x03) << 11 | (header[4] << 3) | (header[5] >> 5)
+        packet = bytearray(f.read(length - 7))
         audio_packets.append(packet)
     return audio_packets
 
@@ -126,25 +127,29 @@ rs = reedsolo.RSCodec(8)
 NUM_FRAMES = 32
 
 fpsd = [open('psd{0}.raw'.format(channel+1), 'rb') for channel in range(8)]
+faudio = open('sample.hdc', 'rb')
 
 with open('p1.raw', 'wb') as fout:
     start_seq_no = 0
     for frame in range(NUM_FRAMES):
-        audio_packets = [silence_packet] * 32
-
-        # 1017sG.pdf figure 5-1
-        nop = len(audio_packets)
-        la_loc = 8 + 6 + nop*2 + 128 - 1
-
-        end = la_loc
-        ends = []
-        for packet in audio_packets:
-            end += len(packet) + 1
-            ends.append(end)
-
         pdu_seq_no = frame % 2
         p1_bytes = bytearray()
-        for channel in range(8):
+        for channel in range(3):
+            if channel == 0:
+                audio_packets = read_audio_packets(faudio)
+            else:
+                audio_packets = [silence_packet] * 32
+
+            # 1017sG.pdf figure 5-1
+            nop = len(audio_packets)
+            la_loc = 8 + 6 + nop*2 + 128 - 1
+
+            end = la_loc
+            ends = []
+            for packet in audio_packets:
+                end += len(packet) + 1
+                ends.append(end)
+
             pdu = pdu_control_word(codec_mode = 0, stream_id = 0, pdu_seq_no = pdu_seq_no, blend_control = 2,
                 per_stream_delay = 0, common_delay = 0, latency = 4, p_first = 0, p_last = 0,
                 start_seq_no = start_seq_no, nop = nop, hef = 1, la_loc = la_loc)
@@ -173,5 +178,6 @@ with open('p1.raw', 'wb') as fout:
         p1_bytes = bytearray([int("".join([str(b) for b in p1_bits[i:i+8]]), 2) for i in range(0, len(p1_bits), 8)])
         fout.write(p1_bytes)
 
+faudio.close()
 for channel in range(8):
     fpsd[channel].close()
