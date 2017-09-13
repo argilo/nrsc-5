@@ -19,7 +19,7 @@
 #
 ```
 
-**Note: This project is no longer under active development. All its features have been ported into gr-nrsc5, a GNU Radio implementation of NRSC-5: https://github.com/argilo/gr-nrsc5**
+## Note: This project is no longer under active development. All its features have been ported into gr-nrsc5, a GNU Radio implementation of NRSC-5: https://github.com/argilo/gr-nrsc5. Please use that instead.
 
 NRSC-5 Tools
 ============
