@@ -1,3 +1,5 @@
+## Note: This project is no longer under active development. All its features have been ported into gr-nrsc5, a GNU Radio implementation of NRSC-5: https://github.com/argilo/gr-nrsc5. Please use that instead.
+
 ```
 #
 # Copyright 2016 Clayton Smith (argilo@gmail.com)
@@ -18,8 +20,6 @@
 # along with NRSC-5 Tools.  If not, see <http://www.gnu.org/licenses/>.
 #
 ```
-
-## Note: This project is no longer under active development. All its features have been ported into gr-nrsc5, a GNU Radio implementation of NRSC-5: https://github.com/argilo/gr-nrsc5. Please use that instead.
 
 NRSC-5 Tools
 ============
